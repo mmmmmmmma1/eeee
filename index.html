@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>website</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #1e1e1e;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    button {
+      background-color: #00c853;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00b347;
+    }
+
+    #mainContent {
+      display: none;
+    }
+
+    .credits {
+      font-size: 14px;
+      color: #888;
+      margin-top: 20px;
+    }
+
+    .countdown {
+      margin-top: 15px;
+      font-size: 18px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Passcode Prompt -->
+  <div class="container" id="passcodeContainer">
+    <h1>🔐 Enter Passcode</h1>
+    <input type="password" id="passcodeInput" placeholder="Enter passcode...">
+    <button onclick="checkPasscode()">Unlock</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container" id="mainContent">
+    <h1>type the link</h1>
+    <p>Enter the URL of the website you want to open:</p>
+    <input type="text" id="urlInput" placeholder="example.com">
+    <button onclick="openGameWindow()">Open Website</button>
+    <div class="countdown">
+      Reloading in <span id="timer">30</span> seconds...
+    </div>
+    <div class="credits">
+      <h3>unboxer</h3>
+      <p>by someone and pizzagod</p>
+    </div>
+  </div>
+
+  <script>
+    const correctPasscode = "0909090909hperfefefefererferfefefrfefefergehdwegeddbhdyeey";
+    let countdownTime = 30;
+    let countdownInterval;
+
+    function checkPasscode() {
+      const pass = document.getElementById("passcodeInput").value.trim();
+      if (pass === correctPasscode) {
+        document.getElementById("passcodeContainer").style.display = "none";
+        document.getElementById("mainContent").style.display = "block";
+
+        startCountdown();
+      } else {
+        alert("Wrong passcode!");
+      }
+    }
+
+    function startCountdown() {
+      document.getElementById("timer").textContent = countdownTime;
+
+      countdownInterval = setInterval(() => {
+        countdownTime--;
+        document.getElementById("timer").textContent = countdownTime;
+
+        if (countdownTime <= 0) {
+          clearInterval(countdownInterval);
+          alert("Session expired. Reloading...");
+          location.reload();
+        }
+      }, 1000);
+    }
+
+    function openGameWindow() {
+      let url = document.getElementById('urlInput').value.trim();
+      if (!url) {
+        alert("Please enter a valid URL.");
+        return;
+      }
+
+      if (!url.startsWith('https://')) {
+        url = 'https://' + url.replace(/^http:\/\//, '');
+      }
+
+      const newWindow = window.open("", "_blank");
+
+      if (!newWindow) {
+        alert("Popup blocked! Please allow popups for this site.");
+        return;
+      }
+
+      newWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Viewer</title>
+          <style>
+            html, body {
+              margin: 0;
+              padding: 0;
+              height: 100%;
+              overflow: hidden;
+              background: black;
+            }
+            iframe {
+              width: 100%;
+              height: 100%;
+              border: none;
+            }
+          </style>
+        </head>
+        <body>
+          <iframe src="${url}" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+        </body>
+        </html>
+      `);
+      newWindow.document.close();
+    }
+  </script>
+</body>
+</html>
